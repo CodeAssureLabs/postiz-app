@@ -694,6 +694,39 @@ export class PostsRepository {
     return { previousPost, posts };
   }
 
+  async duplicatePost(orgId: string, posts: Post[]) {
+    const group = uuidv4();
+    const created: Post[] = [];
+
+    for (const post of posts) {
+      created.push(
+        await this._post.model.post.create({
+          data: {
+            content: post.content,
+            title: post.title,
+            description: post.description,
+            delay: post.delay,
+            intervalInDays: post.intervalInDays,
+            publishDate: post.publishDate,
+            settings: post.settings,
+            image: post.image,
+            group,
+            state: 'DRAFT' as const,
+            integrationId: post.integrationId,
+            organizationId: orgId,
+            approvedSubmitForOrder: APPROVED_SUBMIT_FOR_ORDER.NO,
+            creationMethod: CreationMethod.UNKNOWN,
+            ...(created.length
+              ? { parentPostId: created[created.length - 1].id }
+              : {}),
+          },
+        })
+      );
+    }
+
+    return { group, posts: created };
+  }
+
   async submit(id: string, order: string, buyerOrganizationId: string) {
     return this._post.model.post.update({
       where: {
