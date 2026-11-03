@@ -631,4 +631,26 @@ export class OrganizationRepository {
       },
     });
   }
+
+  getAuthProviders(orgId: string) {
+    return this._organization.model.organization.findUnique({
+      where: {
+        id: orgId,
+      },
+      select: {
+        authProviders: true,
+      },
+    });
+  }
+
+  updateAuthProviders(orgId: string, providers: string[]) {
+    return this._organization.model.organization.update({
+      where: {
+        id: orgId,
+      },
+      data: {
+        authProviders: JSON.stringify(providers),
+      },
+    });
+  }
 }
