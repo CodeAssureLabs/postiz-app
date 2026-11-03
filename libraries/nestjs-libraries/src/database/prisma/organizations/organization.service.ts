@@ -208,4 +208,12 @@ export class OrganizationService {
       shortlink
     );
   }
+
+  getAuthProviders(orgId: string) {
+    return this._organizationRepository.getAuthProviders(orgId);
+  }
+
+  updateAuthProviders(orgId: string, providers: string[]) {
+    return this._organizationRepository.updateAuthProviders(orgId, providers);
+  }
 }

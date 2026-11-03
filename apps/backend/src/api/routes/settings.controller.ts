@@ -6,6 +6,7 @@ import {
   HttpException,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { GetOrgFromRequest } from '@gitroom/nestjs-libraries/user/org.from.request';
 import { GetUserFromRequest } from '@gitroom/nestjs-libraries/user/user.from.request';
@@ -15,6 +16,7 @@ import { OrganizationService } from '@gitroom/nestjs-libraries/database/prisma/o
 import { AddTeamMemberDto } from '@gitroom/nestjs-libraries/dtos/settings/add.team.member.dto';
 import { AdminAddTeamMemberDto } from '@gitroom/nestjs-libraries/dtos/settings/admin.add.team.member.dto';
 import { ShortlinkPreferenceDto } from '@gitroom/nestjs-libraries/dtos/settings/shortlink-preference.dto';
+import { AuthProvidersDto } from '@gitroom/nestjs-libraries/dtos/settings/auth.providers.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthorizationActions, Sections } from '@gitroom/backend/services/auth/permissions/permission.exception.class';
 
@@ -86,6 +88,24 @@ export class SettingsController {
     return this._organizationService.updateShortlinkPreference(
       org.id,
       body.shortlink
+    );
+  }
+
+  @Get('/auth-providers')
+  @CheckPolicies([AuthorizationActions.Create, Sections.ADMIN])
+  async getAuthProviders(@GetOrgFromRequest() org: Organization) {
+    return this._organizationService.getAuthProviders(org.id);
+  }
+
+  @Put('/auth-providers')
+  @CheckPolicies([AuthorizationActions.Create, Sections.ADMIN])
+  async updateAuthProviders(
+    @GetOrgFromRequest() org: Organization,
+    @Body() body: AuthProvidersDto
+  ) {
+    return this._organizationService.updateAuthProviders(
+      org.id,
+      body.providers
     );
   }
 }
