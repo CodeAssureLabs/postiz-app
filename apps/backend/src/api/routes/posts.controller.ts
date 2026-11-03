@@ -240,6 +240,14 @@ export class PostsController {
     return this._postsService.createPost(org.id, body, 'WEB');
   }
 
+  @Post('/:id/duplicate')
+  async duplicatePost(
+    @GetOrgFromRequest() org: Organization,
+    @Param('id') id: string
+  ) {
+    return this._postsService.duplicatePost(org.id, id);
+  }
+
   @Post('/generator/draft')
   @CheckPolicies([AuthorizationActions.Create, Sections.POSTS_PER_MONTH])
   generatePostsDraft(

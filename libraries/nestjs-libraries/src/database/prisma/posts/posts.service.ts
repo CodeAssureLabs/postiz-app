@@ -572,6 +572,16 @@ export class PostsService {
     return list;
   }
 
+  async duplicatePost(orgId: string, id: string) {
+    const posts = await this.getPostsRecursively(id, true);
+
+    if (!posts.length) {
+      throw new BadRequestException('Post not found');
+    }
+
+    return this._postRepository.duplicatePost(orgId, posts);
+  }
+
   async getOldPosts(orgId: string, date: string) {
     return this._postRepository.getOldPosts(orgId, date);
   }
